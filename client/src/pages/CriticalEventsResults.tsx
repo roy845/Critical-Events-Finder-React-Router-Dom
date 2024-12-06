@@ -31,6 +31,9 @@ const CriticalEventsResults = () => {
         className={`max-w-4xl mx-auto p-6 shadow-lg rounded-lg mt-10 ${
           isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
         }`}
+        style={{
+          minWidth: "800px",
+        }}
       >
         <FormHeader title="Critical Events Results" />
         {criticalEvents.length === 0 && searchCriticalEvents.trim() !== "" && (
