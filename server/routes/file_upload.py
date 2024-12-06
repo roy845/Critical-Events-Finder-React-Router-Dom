@@ -1,10 +1,9 @@
 from flask_restx import Namespace, Resource, fields
+from services.FileUploadService import FileUploadService
 from werkzeug.datastructures import FileStorage
-import json
-from jsonschema import validate, ValidationError
-import pandas as pd
 
-# Create the namespace
+
+
 file_upload_api = Namespace('file-upload', description='File Upload Operations')
 
 # Define input/output models
@@ -36,6 +35,16 @@ file_upload_response = file_upload_api.model(
     },
 )
 
+
+# Define the error response model
+error_response = file_upload_api.model(
+    'ErrorResponse',
+    {
+        'message': fields.String(description='Error message describing what went wrong'),
+        'days_list': fields.List(fields.Raw, description='List of days, empty in case of an error'),
+    }
+)
+
 # Configure file upload parser
 file_upload_parser = file_upload_api.parser()
 file_upload_parser.add_argument(
@@ -48,106 +57,44 @@ file_upload_parser.add_argument(
 
 @file_upload_api.route('/uploadExcel')
 class FileUpload(Resource):
+    """
+    Endpoint to upload and process an Excel file without headers.
+
+    This endpoint allows users to upload an Excel file containing day-indexed
+    events and intersections. The file must meet the following criteria:
+    
+    - Be in `.xlsx` or `.xls` format.
+    - Contain at least three columns: `day_index`, `intersection`, and `event`.
+    
+    The data is grouped by `day_index` and returned as a structured list.
+
+    **Responses**:
+    - **200**: File processed successfully. Returns a structured list of days and events.
+    - **400**: Missing file, invalid file type, or insufficient columns.
+    - **500**: Server error occurred while processing the file.
+    """
     @file_upload_api.expect(file_upload_parser)
-    @file_upload_api.marshal_with(file_upload_response)
+    @file_upload_api.marshal_with(file_upload_response, code=200, description='File processed successfully')
+    @file_upload_api.doc(
+        responses={
+            200: ('File processed successfully', file_upload_response),
+            400: ('Invalid file type, missing file, or insufficient columns', error_response),
+            500: ('An error occurred while processing the file', error_response),
+        }
+    )
     def post(self):
-        """Upload and process an Excel file without headers."""
+        """
+        Upload and process an Excel file.
+
+        This method processes the uploaded file and extracts day-indexed events. 
+        Errors such as missing files, invalid file types, or insufficient columns 
+        are returned with appropriate status codes.
+        """
         args = file_upload_parser.parse_args()
         uploaded_file = args['file']
-
-        if not uploaded_file:
-            return {'message': 'No file provided', 'days_list': []}, 400
-
-        file_extension = uploaded_file.filename.split('.')[-1].lower()
-        if file_extension not in ['xlsx', 'xls']:
-            return {'message': 'Invalid file type. Only Excel files are allowed.', 'days_list': []}, 400
-
-        try:
-            # Read the Excel file into a pandas DataFrame without headers
-            df = pd.read_excel(uploaded_file, header=None)
-
-            # Ensure there are at least three columns
-            if df.shape[1] < 3:
-                return {
-                    'message': 'The file must contain at least three columns: day_index, intersection, and event.',
-                    'days_list': []
-                }, 400
-
-            # Rename columns for easier processing
-            df.columns = ['day_index', 'intersection', 'event']
-
-            # Group data into a structured format
-            days_list = []
-            grouped = df.groupby('day_index')
-            for day_index, group in grouped:
-                day_id = f"day-{day_index}"
-                events = group[['intersection', 'event']].to_dict(orient='records')
-                days_list.append({'id': day_id, 'events': events})
-
-            return {
-                'message': 'File processed successfully',
-                'days_list': days_list
-            }, 200
-
-        except Exception as e:
-            return {
-                'message': 'An error occurred while processing the file',
-                'days_list': [],
-                'error': str(e),
-            }, 500
+        return FileUploadService.uploadExcelFile(uploaded_file)
 
 
-# JSON Schema for validation
-json_schema = {
-    "type": "array",
-    "items": {
-        "type": "object",
-        "properties": {
-            "id": {"type": "string"},
-            "events": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "intersection": {"type": "string"},
-                        "event": {"type": "string"},
-                    },
-                    "required": ["intersection", "event"],
-                },
-            },
-        },
-        "required": ["id", "events"],
-    },
-}
-
-# Define input/output models
-file_upload_response = file_upload_api.model(
-    'FileUploadResponse',
-    {
-        'message': fields.String(description='Response message'),
-        'days_list': fields.List(
-            fields.Nested(
-                file_upload_api.model(
-                    'Day',
-                    {
-                        'id': fields.String(description='Day ID'),
-                        'events': fields.List(
-                            fields.Nested(
-                                file_upload_api.model(
-                                    'Event',
-                                    {
-                                        'intersection': fields.String(description='Intersection'),
-                                        'event': fields.String(description='Event description'),
-                                    }
-                                )
-                            )
-                        ),
-                    }
-                )
-            )
-        ),
-    },
-)
 
 # Configure file upload parser
 file_upload_parser = file_upload_api.parser()
@@ -161,36 +108,48 @@ file_upload_parser.add_argument(
 
 @file_upload_api.route('/uploadJSON')
 class JsonFileUpload(Resource):
+    """
+    Endpoint to upload and process a JSON file.
+
+    This endpoint allows users to upload a JSON file containing a list of days
+    with their respective events. The JSON must adhere to the following schema:
+    
+    ```json
+    [
+        {
+            "id": "day-1",
+            "events": [
+                {
+                    "intersection": "Intersection A",
+                    "event": "Event A"
+                }
+            ]
+        }
+    ]
+    ```
+
+    **Responses**:
+    - **200**: File processed successfully. Returns the validated list of days and events.
+    - **400**: Missing file, invalid file type, JSON decoding error, or schema validation failure.
+    - **500**: Server error occurred while processing the file.
+    """
     @file_upload_api.expect(file_upload_parser)
-    @file_upload_api.marshal_with(file_upload_response)
+    @file_upload_api.marshal_with(file_upload_response, code=200, description='File processed successfully')
+    @file_upload_api.doc(
+        responses={
+            200: ('File processed successfully', file_upload_response),
+            400: ('Invalid file type, missing file, invalid JSON, or schema validation failure', error_response),
+            500: ('An unexpected error occurred', error_response),
+        }
+    )
     def post(self):
-        """Upload and process a JSON file."""
+        """
+        Upload and process a JSON file.
+
+        This method validates the JSON structure and returns the data if valid.
+        Errors such as decoding issues or schema validation failures are
+        returned with appropriate status codes.
+        """
         args = file_upload_parser.parse_args()
         uploaded_file = args['file']
-
-        if not uploaded_file:
-            return {'message': 'No file provided', 'days_list': []}, 400
-
-        file_extension = uploaded_file.filename.split('.')[-1].lower()
-        if file_extension != 'json':
-            return {'message': 'Invalid file type. Only JSON files are allowed.', 'days_list': []}, 400
-
-        try:
-            # Parse the JSON file
-            json_data = json.load(uploaded_file)
-
-            # Validate the JSON structure
-            validate(instance=json_data, schema=json_schema)
-
-            # Extract and return the validated data
-            return {
-                'message': 'File processed successfully',
-                'days_list': json_data,
-            }, 200
-
-        except json.JSONDecodeError as e:
-            return {'message': 'Invalid JSON file.', 'error': str(e), 'days_list': []}, 400
-        except ValidationError as e:
-            return {'message': 'JSON validation failed.', 'error': str(e), 'days_list': []}, 400
-        except Exception as e:
-            return {'message': 'An unexpected error occurred.', 'error': str(e), 'days_list': []}, 500
+        return FileUploadService.uploadJSONFile(uploaded_file)
