@@ -1,6 +1,8 @@
 import CriticalEventsTable from "../components/CriticalEventsTable";
 import FormHeader from "../components/FormHeader";
 import Graphs from "../components/Graphs";
+import GroupedCriticalEvents from "../components/GroupedCriticalEvents";
+import GroupedCriticalEventsPagination from "../components/GroupedCriticalEventsPagination";
 import MainLayout from "../components/layout/MainLayout";
 import NoCriticalEvents from "../components/NoCriticalEvents";
 import Tabs from "../components/Tabs";
@@ -40,8 +42,15 @@ const CriticalEventsResults = () => {
         {criticalEvents.length > 0 && <Tabs />}
         {activeTab === "table" ? (
           <CriticalEventsTable />
-        ) : (
+        ) : activeTab === "graphs" ? (
           allCriticalEvents.length > 0 && <Graphs />
+        ) : (
+          allCriticalEvents.length > 0 && (
+            <>
+              <GroupedCriticalEvents />
+              <GroupedCriticalEventsPagination />
+            </>
+          )
         )}
       </div>
     </MainLayout>

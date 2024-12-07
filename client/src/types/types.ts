@@ -25,7 +25,7 @@ export type SortOrder = "asc" | "desc" | null;
 
 export type AllowedFieldType = "intersection" | "event";
 
-export type AllowedActiveTabString = "table" | "graphs";
+export type AllowedActiveTabString = "table" | "graphs" | "groupByLetter";
 
 export type DurationUnit = "ms" | "s" | "none";
 
@@ -41,9 +41,12 @@ export interface CriticalEventsState {
   itemsPerPage: number;
   currentPageDaysList: number;
   itemsPerPageDaysList: number;
+  currentPageGroupedCriticalEvents: number;
+  itemsPerPageGroupedCriticalEvents: number;
   fileProperties: FileProperties | null;
   isGlowing: boolean;
   requestDuration: number;
+  selectedLetter: string;
 }
 
 export type FileProperties = {

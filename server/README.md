@@ -382,6 +382,10 @@ Use the arrows to swipe graphs or hold the mouse click and swipe to left/right.
 
 ![alt text](assets/image-30.png)
 
+<b>Grouped By Letter Critical Events</b>
+
+![alt text](assets/image-37.png)
+
 <b> Invalid days number input </b>
 
 ![alt text](assets/image-31.png)
