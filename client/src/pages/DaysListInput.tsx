@@ -3,16 +3,15 @@ import FileUpload from "../components/FileUpload";
 import FormHeader from "../components/FormHeader";
 import JSONFileUpload from "../components/JSONFileUpload";
 import RandomEventButton from "../components/RandomEventButton";
-import Header from "../components/Header";
 import AppInfoModal from "../components/modal/AppInfoModal";
 import useDaysListInput from "../hooks/useDaysListInput";
+import MainLayout from "../components/layout/MainLayout";
 
 const DaysListInput = () => {
   const { JSONfileInputRef, fileInputRef, isDarkMode } = useDaysListInput();
   return (
-    <>
+    <MainLayout title="Days List Input">
       <AppInfoModal />
-      <Header title="Critical Events Finder" />
       <div
         className={`max-w-4xl mx-auto p-6 shadow-lg rounded-lg mt-10 ${
           isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
@@ -58,7 +57,7 @@ const DaysListInput = () => {
           <RandomEventButton />
         </div>
       </div>
-    </>
+    </MainLayout>
   );
 };
 

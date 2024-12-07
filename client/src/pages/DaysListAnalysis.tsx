@@ -11,6 +11,7 @@ import Header from "../components/Header";
 import ScrollButton from "../components/ScrollButton";
 import DaysListNotFound from "../components/DaysListNotFound";
 import useDaysListAnalysis from "../hooks/useDaysListAnalysis";
+import MainLayout from "../components/layout/MainLayout";
 
 const DaysListAnalysis = () => {
   const {
@@ -32,16 +33,14 @@ const DaysListAnalysis = () => {
 
   if (daysList.days_list.length === 0) {
     return (
-      <>
-        <Header title="Critical Events Finder" />
+      <MainLayout title="Days List Not Loaded">
         <DaysListNotFound />
-      </>
+      </MainLayout>
     );
   }
 
   return (
-    <>
-      <Header title="Critical Events Finder" />
+    <MainLayout title="Days List Analysis">
       <div
         className={`max-w-4xl mx-auto p-6 shadow-lg rounded-lg mt-10 ${
           isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
@@ -86,7 +85,7 @@ const DaysListAnalysis = () => {
         </form>
         <ScrollButton />
       </div>
-    </>
+    </MainLayout>
   );
 };
 

@@ -4,7 +4,7 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
 import { useDarkMode } from "../hooks/useDarKMode";
 
 const NotFound = (): JSX.Element => {
-  useDocumentTitle("Not Found");
+  useDocumentTitle("Page Not Found");
   const { isDarkMode } = useDarkMode();
 
   return (

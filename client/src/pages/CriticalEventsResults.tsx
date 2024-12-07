@@ -1,7 +1,7 @@
 import CriticalEventsTable from "../components/CriticalEventsTable";
 import FormHeader from "../components/FormHeader";
 import Graphs from "../components/Graphs";
-import Header from "../components/Header";
+import MainLayout from "../components/layout/MainLayout";
 import NoCriticalEvents from "../components/NoCriticalEvents";
 import Tabs from "../components/Tabs";
 import useCriticalEventsResults from "../hooks/useCriticalEventsResults";
@@ -17,16 +17,14 @@ const CriticalEventsResults = () => {
 
   if (allCriticalEvents.length === 0) {
     return (
-      <>
-        <Header title="Critical Events Finder" />
+      <MainLayout title="Critical Events Not Found">
         <NoCriticalEvents />
-      </>
+      </MainLayout>
     );
   }
 
   return (
-    <>
-      <Header title="Critical Events Finder" />
+    <MainLayout title="Critical Events Results">
       <div
         className={`max-w-4xl mx-auto p-6 shadow-lg rounded-lg mt-10 ${
           isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
@@ -46,7 +44,7 @@ const CriticalEventsResults = () => {
           allCriticalEvents.length > 0 && <Graphs />
         )}
       </div>
-    </>
+    </MainLayout>
   );
 };
 
