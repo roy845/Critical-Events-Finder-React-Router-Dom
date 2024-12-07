@@ -6,7 +6,7 @@ export class FileUploadRepository {
   /**
    * Uploads an Excel file and validates the response.
    * @param formData - The FormData containing the Excel file.
-   * @returns A promise resolving to the parsed critical events response.
+   * @returns A promise resolving to the parsed file upload response.
    * @throws Error if validation or the API call fails.
    */
   static async uploadExcelFile(
@@ -19,7 +19,7 @@ export class FileUploadRepository {
   /**
    * Uploads a JSON file and validates the response.
    * @param formData - The FormData containing the JSON file.
-   * @returns A promise resolving to the parsed critical events response.
+   * @returns A promise resolving to the parsed file upload response.
    * @throws Error if validation or the API call fails.
    */
   static async uploadJsonFile(formData: FormData): Promise<FileUploadResponse> {

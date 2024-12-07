@@ -6,9 +6,9 @@ import { HttpClient } from "../utils/httpClient";
  */
 export class FileUploadDAL {
   /**
-   * Uploads an Excel file to the backend and processes critical events.
+   * Uploads an Excel file to the backend and processes it.
    * @param formData - The FormData containing the Excel file.
-   * @returns A promise resolving to the validated critical events response.
+   * @returns A promise resolving to the validated file upload response.
    */
   static async uploadExcelFile(
     formData: FormData
@@ -20,9 +20,9 @@ export class FileUploadDAL {
   }
 
   /**
-   * Uploads a JSON file to the backend and processes critical events.
+   * Uploads a JSON file to the backend and processes it.
    * @param formData - The FormData containing the JSON file.
-   * @returns A promise resolving to the validated critical events response.
+   * @returns A promise resolving to the validated file upload response.
    */
   static async uploadJsonFile(formData: FormData): Promise<FileUploadResponse> {
     return HttpClient.postFormData<FileUploadResponse>(
