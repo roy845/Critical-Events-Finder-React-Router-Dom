@@ -81,6 +81,7 @@ The <code>find_critical_events</code> function takes a list of days, where each 
 | **TypeScript**     | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuiTDrB4jE3RaO72W0feOQP1XcZhjTrOBuYcqcXNSIQKeOx4iaA75cEZVN5BDrkQcLYK0&usqp=CAU" width="100px" height="100px"> |
 | **Python**         | <img src="assets/image-2.png" width="100px" height="100px">                                                                                                                   |
 | **Flask**          | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRubRv-E-PFnEuyYITdMYPqMXrBLOIKUTW8ug&s" width="100px" height="100px">                                         |
+| **AWS S3**         | <img src="https://miro.medium.com/v2/resize:fit:640/format:webp/0*lrhD8e1zlemTCUvT.png" width="100px" height="100px">                                                         |
 
 ## Installation
 
