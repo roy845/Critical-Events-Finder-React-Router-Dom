@@ -3,6 +3,7 @@ import DaysListInput from "./pages/DaysListInput";
 import DaysListAnalysis from "./pages/DaysListAnalysis";
 import CriticalEventsResults from "./pages/CriticalEventsResults";
 import NotFound from "./pages/NotFound";
+import ListAllFiles from "./pages/ListAllFiles";
 
 const AppRoutes = (): JSX.Element => {
   const routes = createBrowserRouter([
@@ -18,6 +19,11 @@ const AppRoutes = (): JSX.Element => {
       path: "/critical-events-results",
       element: <CriticalEventsResults />,
     },
+    {
+      path: "/all-files",
+      element: <ListAllFiles />,
+    },
+
     {
       path: "*",
       element: <NotFound />,

@@ -14,18 +14,17 @@ export class Utils {
 
   /**
    * Formats file size into human-readable format.
-   * @param {number} size - File size in bytes.
+   * @param {number} sizeInBytes - File size in bytes.
    * @returns {string} - Formatted file size (e.g., "2.50 MB").
    */
-  static formatFileSize(size: number): string {
-    if (size >= 1024 * 1024 * 1024) {
-      return `${(size / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-    } else if (size >= 1024 * 1024) {
-      return `${(size / (1024 * 1024)).toFixed(2)} MB`;
-    } else {
-      return `${(size / 1024).toFixed(2)} KB`;
-    }
-  }
+  static formatFileSize = (sizeInBytes: number) => {
+    if (sizeInBytes < 1024) return `${sizeInBytes} B`;
+    if (sizeInBytes < 1024 * 1024)
+      return `${(sizeInBytes / 1024).toFixed(2)} KB`;
+    if (sizeInBytes < 1024 * 1024 * 1024)
+      return `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB`;
+    return `${(sizeInBytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+  };
 
   /**
    * Gets a random item from an array.

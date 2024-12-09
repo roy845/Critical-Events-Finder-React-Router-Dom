@@ -1,5 +1,13 @@
-import { FileUploadResponse } from "../types/types";
-import { FileUploadResponseSchema } from "../schemas/schemas";
+import {
+  FetchAllFilesResponse,
+  FileProcessResponse,
+  FileUploadResponse,
+} from "../types/types";
+import {
+  FetchAllFilesResponseSchema,
+  FileProcessResponseSchema,
+  FileUploadResponseSchema,
+} from "../schemas/schemas";
 import { FileUploadDAL } from "../dal/fileUploadDAL";
 
 export class FileUploadRepository {
@@ -13,7 +21,7 @@ export class FileUploadRepository {
     formData: FormData
   ): Promise<FileUploadResponse> {
     const response = await FileUploadDAL.uploadExcelFile(formData);
-    return this.validateResponse(response);
+    return this.validateFileUploadResponse(response);
   }
 
   /**
@@ -24,7 +32,33 @@ export class FileUploadRepository {
    */
   static async uploadJsonFile(formData: FormData): Promise<FileUploadResponse> {
     const response = await FileUploadDAL.uploadJsonFile(formData);
-    return this.validateResponse(response);
+    return this.validateFileUploadResponse(response);
+  }
+
+  static async fetchAllFiles(): Promise<FetchAllFilesResponse> {
+    const response = await FileUploadDAL.fetchAllFiles();
+    return this.validateFetchAllFilesResponse(response);
+  }
+
+  static async deleteFile(fileName: string): Promise<FileUploadResponse> {
+    const response = await FileUploadDAL.deleteFile(fileName);
+    return this.validateFileUploadResponse(response);
+  }
+
+  static async deleteAllFiles(): Promise<FileUploadResponse> {
+    const response = await FileUploadDAL.deleteAllFiles();
+    return this.validateFileUploadResponse(response);
+  }
+
+  static async downloadAndProcessFile(
+    fileNameWithoutPrefix: string,
+    fileExtension: string
+  ): Promise<FileProcessResponse> {
+    const response = await FileUploadDAL.downloadAndProcessFile(
+      fileNameWithoutPrefix,
+      fileExtension
+    );
+    return this.validateFileProcessResponse(response);
   }
 
   /**
@@ -32,8 +66,41 @@ export class FileUploadRepository {
    * @param response - The raw API response to validate.
    * @throws Error if validation fails.
    */
-  private static validateResponse(response: unknown): FileUploadResponse {
+  private static validateFileUploadResponse(
+    response: unknown
+  ): FileUploadResponse {
     const parsedResponse = FileUploadResponseSchema.safeParse(response);
+
+    if (!parsedResponse.success) {
+      console.error(
+        "Validation error for response:",
+        parsedResponse.error.errors
+      );
+      throw new Error("Invalid response format from API");
+    }
+    return parsedResponse.data;
+  }
+
+  private static validateFetchAllFilesResponse(
+    response: unknown
+  ): FetchAllFilesResponse {
+    const parsedResponse = FetchAllFilesResponseSchema.safeParse(response);
+
+    if (!parsedResponse.success) {
+      console.error(
+        "Validation error for response:",
+        parsedResponse.error.errors
+      );
+      throw new Error("Invalid response format from API");
+    }
+    return parsedResponse.data;
+  }
+
+  private static validateFileProcessResponse(
+    response: unknown
+  ): FileProcessResponse {
+    const parsedResponse = FileProcessResponseSchema.safeParse(response);
+
     if (!parsedResponse.success) {
       console.error(
         "Validation error for response:",

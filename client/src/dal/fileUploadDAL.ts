@@ -1,4 +1,8 @@
-import { FileUploadResponse } from "../types/types";
+import {
+  FetchAllFilesResponse,
+  FileProcessResponse,
+  FileUploadResponse,
+} from "../types/types";
 import { HttpClient } from "../utils/httpClient";
 
 /**
@@ -28,6 +32,29 @@ export class FileUploadDAL {
     return HttpClient.postFormData<FileUploadResponse>(
       "/file-upload/uploadJSON",
       formData
+    );
+  }
+
+  static async fetchAllFiles(): Promise<FetchAllFilesResponse> {
+    return HttpClient.get<FetchAllFilesResponse>("/file-upload/listFiles");
+  }
+
+  static async deleteFile(fileName: string): Promise<FileUploadResponse> {
+    return HttpClient.delete<FileUploadResponse>(
+      `/file-upload/deleteFile/${fileName.split("/")[1]}`
+    );
+  }
+
+  static async deleteAllFiles(): Promise<FileUploadResponse> {
+    return HttpClient.delete<FileUploadResponse>("/file-upload/deleteAllFiles");
+  }
+
+  static async downloadAndProcessFile(
+    fileNameWithoutPrefix: string,
+    fileExtension: string
+  ): Promise<FileProcessResponse> {
+    return HttpClient.get(
+      `/file-upload/downloadAndProcessFile/${fileNameWithoutPrefix}?file_type=${fileExtension}`
     );
   }
 }

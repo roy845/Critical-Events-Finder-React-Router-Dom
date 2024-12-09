@@ -1,5 +1,9 @@
 import { FileUploadRepository } from "../repository/FileUploadRepository";
-import { FileUploadResponse } from "../types/types";
+import {
+  FetchAllFilesResponse,
+  FileProcessResponse,
+  FileUploadResponse,
+} from "../types/types";
 
 export class FileUploadService {
   /**
@@ -20,5 +24,27 @@ export class FileUploadService {
    */
   static async uploadJSONFile(formData: FormData): Promise<FileUploadResponse> {
     return FileUploadRepository.uploadJsonFile(formData);
+  }
+
+  static async fetchAllFiles(): Promise<FetchAllFilesResponse> {
+    return FileUploadRepository.fetchAllFiles();
+  }
+
+  static async deleteFile(fileName: string): Promise<FileUploadResponse> {
+    return FileUploadRepository.deleteFile(fileName);
+  }
+
+  static async deleteAllFiles(): Promise<FileUploadResponse> {
+    return FileUploadRepository.deleteAllFiles();
+  }
+
+  static async downloadAndProcessFile(
+    fileNameWithoutPrefix: string,
+    fileExtension: string
+  ): Promise<FileProcessResponse> {
+    return FileUploadRepository.downloadAndProcessFile(
+      fileNameWithoutPrefix,
+      fileExtension
+    );
   }
 }

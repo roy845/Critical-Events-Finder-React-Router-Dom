@@ -18,7 +18,21 @@ export interface CriticalEventsResponse {
 
 export interface FileUploadResponse {
   message: string;
+}
+
+export interface FileProcessResponse {
+  message: string;
   days_list: Day[];
+}
+
+export type FileType = {
+  file_name: string;
+  size: number;
+};
+
+export interface FetchAllFilesResponse {
+  message: string;
+  files: FileType[];
 }
 
 export type SortOrder = "asc" | "desc" | null;

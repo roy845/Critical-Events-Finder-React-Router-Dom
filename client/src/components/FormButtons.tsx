@@ -90,6 +90,7 @@ const FormButtons = ({ fileInputRef, JSONFilInputRef }: FileUploadProps) => {
         isOpen={isModalOpen}
         confirmText={confirmText}
         isConfirmEnabled={isConfirmEnabled}
+        confirmReset="Reset Form"
         onClose={closeModal}
         onConfirm={confirmReset}
         onTextChange={handleConfirmTextChange}

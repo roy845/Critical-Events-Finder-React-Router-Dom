@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../hooks/useDarKMode";
 import Clock from "./Clock";
 
@@ -6,15 +7,18 @@ type HeaderProps = {
 };
 
 function Header({ title }: HeaderProps) {
+  const navigate = useNavigate();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   return (
     <header
-      className={`py-6 px-4 w-full flex items-center justify-center gap-8 shadow ${
+      className={`py-6 px-4 w-full flex items-center justify-center gap-8 shadow cursor-pointer ${
         isDarkMode ? "bg-blue-900 text-white" : "bg-blue-600 text-white"
       }`}
     >
-      <h1 className="text-3xl font-bold">{title}</h1>
+      <h1 className="text-3xl font-bold" onClick={() => navigate("/")}>
+        {title}
+      </h1>
       <Clock />
 
       <div

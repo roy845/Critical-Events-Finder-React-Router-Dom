@@ -386,6 +386,14 @@ Use the arrows to swipe graphs or hold the mouse click and swipe to left/right.
 
 ![alt text](assets/image-37.png)
 
+<b>View Files Uploaded to S3 </b>
+
+![alt text](assets/image-38.png)
+
+<b> All Files From S3 Storage </b>
+
+![alt text](assets/image-39.png)
+
 <b> Invalid days number input </b>
 
 ![alt text](assets/image-31.png)

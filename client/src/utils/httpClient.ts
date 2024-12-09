@@ -50,4 +50,46 @@ export class HttpClient {
       throw error;
     }
   }
+
+  /**
+   * Sends a generic GET request to the API.
+   * @param url - The API endpoint to send the request to.
+   * @param params - Optional query parameters to include in the request URL.
+   * @returns A promise resolving to the response data.
+   */
+  static async get<TResponse>(
+    url: string,
+    params: Record<string, unknown> = {}
+  ): Promise<TResponse> {
+    try {
+      const response = await axiosInstance.get<TResponse>(url, {
+        params,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error in HttpClient while sending GET request:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Sends a DELETE request to the API.
+   * @param url - The API endpoint to send the request to.
+   * @param params - Optional query parameters to include in the request URL.
+   * @returns A promise resolving to the response data.
+   */
+  static async delete<TResponse>(
+    url: string,
+    params: Record<string, unknown> = {}
+  ): Promise<TResponse> {
+    try {
+      const response = await axiosInstance.delete<TResponse>(url, {
+        params,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error in HttpClient while sending DELETE request:", error);
+      throw error;
+    }
+  }
 }

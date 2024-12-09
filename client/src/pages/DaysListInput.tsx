@@ -6,6 +6,7 @@ import RandomEventButton from "../components/RandomEventButton";
 import AppInfoModal from "../components/modal/AppInfoModal";
 import useDaysListInput from "../hooks/useDaysListInput";
 import MainLayout from "../components/layout/MainLayout";
+import { Link } from "react-router-dom";
 
 const DaysListInput = () => {
   const { JSONfileInputRef, fileInputRef, isDarkMode } = useDaysListInput();
@@ -55,6 +56,24 @@ const DaysListInput = () => {
         </label>
         <div className={"text-center mb-2"}>
           <RandomEventButton />
+        </div>
+
+        <div
+          className={`text-center mb-2 ${
+            isDarkMode ? "text-gray-400" : "text-gray-700"
+          }`}
+        >
+          OR
+        </div>
+        <div className="text-center mt-6">
+          <Link
+            to="/all-files"
+            className={`inline-block bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition ${
+              isDarkMode ? "hover:bg-blue-700" : ""
+            }`}
+          >
+            View All Files
+          </Link>
         </div>
       </div>
     </MainLayout>

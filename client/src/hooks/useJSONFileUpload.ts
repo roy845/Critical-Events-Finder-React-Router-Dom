@@ -1,22 +1,13 @@
 import React, { useState } from "react";
-import { useAppDispatch } from "../app/hooks";
 import { toast } from "react-toastify";
-import {
-  resetCriticalEvents,
-  setDaysInput,
-  setDaysList,
-  setFileProperties,
-  setIsGlowing,
-  setRequestDuration,
-} from "../features/criticalEvents/criticalEventsSlice";
 import { useDarkMode } from "./useDarKMode";
 import { useNavigate } from "react-router-dom";
 import { FileUploadService } from "../services/fileUploadService";
+import { FileUploadResponse } from "../types/types";
 
 const useJSONFileUpload = (
   JSONfileInputRef: React.RefObject<HTMLInputElement>
 ) => {
-  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const { isDarkMode } = useDarkMode();
   const navigate = useNavigate();
@@ -49,24 +40,11 @@ const useJSONFileUpload = (
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const response = await FileUploadService.uploadJSONFile(formData);
-      dispatch(setDaysList({ days_list: response.days_list }));
-      dispatch(resetCriticalEvents());
-      toast.success("Data imported successfully from JSON!");
+      const response: FileUploadResponse =
+        await FileUploadService.uploadJSONFile(formData);
 
-      dispatch(
-        setFileProperties({
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          lastModified: file.lastModified,
-        })
-      );
-      dispatch(setDaysInput(""));
-      dispatch(setIsGlowing(true));
-      dispatch(setRequestDuration(0));
-      toast.success(`Uploaded file: ${file.name}`);
-      navigate("/days-list-analysis");
+      toast.success(response.message);
+      navigate("/all-files");
     } catch (error) {
       console.error("Error uploading JSON file:", error);
       toast.error("Failed to upload JSON file. Please try again.");

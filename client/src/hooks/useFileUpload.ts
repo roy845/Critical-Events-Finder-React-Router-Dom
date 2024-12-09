@@ -1,22 +1,13 @@
-import { useAppDispatch } from "../app/hooks";
-import {
-  resetCriticalEvents,
-  setDaysInput,
-  setDaysList,
-  setFileProperties,
-  setIsGlowing,
-  setRequestDuration,
-} from "../features/criticalEvents/criticalEventsSlice";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { useDarkMode } from "./useDarKMode";
 import { useNavigate } from "react-router-dom";
 import { FileUploadService } from "../services/fileUploadService";
+import { FileUploadResponse } from "../types/types";
 
 export const useFileUpload = (
   fileInputRef: React.RefObject<HTMLInputElement>
 ) => {
-  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const { isDarkMode } = useDarkMode();
   const navigate = useNavigate();
@@ -49,29 +40,12 @@ export const useFileUpload = (
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const importedDaysList = await FileUploadService.uploadExcelFile(
-        formData
-      );
+      const response: FileUploadResponse =
+        await FileUploadService.uploadExcelFile(formData);
 
-      dispatch(setDaysList({ days_list: importedDaysList.days_list }));
-      dispatch(resetCriticalEvents());
-      toast.success("Data imported successfully from Excel!");
-      setLoading(false);
+      toast.success(response.message);
 
-      dispatch(
-        setFileProperties({
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          lastModified: file.lastModified,
-        })
-      );
-
-      dispatch(setDaysInput(""));
-      dispatch(setIsGlowing(true));
-      dispatch(setRequestDuration(0));
-      toast.success(`Uploaded file: ${file.name}`);
-      navigate("/days-list-analysis");
+      navigate("/all-files");
     } catch (error) {
       console.error("Error uploading file:", error);
       toast.error("Failed to upload file. Please try again.");

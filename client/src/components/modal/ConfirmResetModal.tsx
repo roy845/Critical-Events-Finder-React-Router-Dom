@@ -10,6 +10,7 @@ interface ConfirmResetModalProps {
   onClose: () => void;
   onConfirm: () => void;
   onTextChange: (text: string) => void;
+  confirmReset: string;
 }
 
 const ConfirmResetModal = ({
@@ -19,6 +20,7 @@ const ConfirmResetModal = ({
   onClose,
   onConfirm,
   onTextChange,
+  confirmReset,
 }: ConfirmResetModalProps) => {
   const { isDarkMode } = useDarkMode();
 
@@ -43,13 +45,13 @@ const ConfirmResetModal = ({
           <IoIosWarning size={24} className="text-yellow-500" />
         </h2>
         <p className="mb-4">
-          To confirm, type <strong>Reset Form</strong> below:
+          To confirm, type <strong>{confirmReset}</strong> below:
         </p>
         <input
           type="text"
           value={confirmText}
           onChange={(e) => onTextChange(e.target.value)}
-          placeholder="Type Reset Form"
+          placeholder={`Type ${confirmReset}`}
           className={`w-full px-3 py-2 mb-4 border rounded-md ${
             isDarkMode
               ? "bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400"
