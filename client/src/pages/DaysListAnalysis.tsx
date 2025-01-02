@@ -7,7 +7,6 @@ import DaysList from "../components/DaysList";
 import DaysListPagination from "../components/DaysListPagination";
 import FormButtons from "../components/FormButtons";
 import DurationUnitSelect from "../components/DurationUnitSelect";
-import Header from "../components/Header";
 import ScrollButton from "../components/ScrollButton";
 import DaysListNotFound from "../components/DaysListNotFound";
 import useDaysListAnalysis from "../hooks/useDaysListAnalysis";

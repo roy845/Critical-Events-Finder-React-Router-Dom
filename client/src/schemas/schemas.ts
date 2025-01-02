@@ -37,6 +37,10 @@ export const FileSchema = z.object({
 export const FetchAllFilesResponseSchema = z.object({
   message: z.string(),
   files: z.array(FileSchema),
+  total_files: z.number(),
+  page: z.number(),
+  limit: z.union([z.number(), z.string()]),
+  total_pages: z.number(),
 });
 
 export const FileProcessResponseSchema = z.object({

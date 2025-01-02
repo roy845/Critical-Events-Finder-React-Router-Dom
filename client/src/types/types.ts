@@ -33,6 +33,10 @@ export type FileType = {
 export interface FetchAllFilesResponse {
   message: string;
   files: FileType[];
+  total_files: number;
+  page: number;
+  limit: number | string;
+  total_pages: number;
 }
 
 export type SortOrder = "asc" | "desc" | null;

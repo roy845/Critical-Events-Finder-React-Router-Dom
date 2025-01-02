@@ -35,8 +35,14 @@ export class FileUploadDAL {
     );
   }
 
-  static async fetchAllFiles(): Promise<FetchAllFilesResponse> {
-    return HttpClient.get<FetchAllFilesResponse>("/file-upload/listFiles");
+  static async fetchAllFiles(
+    page: number = 1,
+    limit: number | string = 3,
+    search: string = ""
+  ): Promise<FetchAllFilesResponse> {
+    return HttpClient.get<FetchAllFilesResponse>(
+      `/file-upload/listFiles?page=${page}&limit=${limit}&search=${search}`
+    );
   }
 
   static async deleteFile(fileName: string): Promise<FileUploadResponse> {

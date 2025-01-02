@@ -26,8 +26,12 @@ export class FileUploadService {
     return FileUploadRepository.uploadJsonFile(formData);
   }
 
-  static async fetchAllFiles(): Promise<FetchAllFilesResponse> {
-    return FileUploadRepository.fetchAllFiles();
+  static async fetchAllFiles(
+    page: number = 1,
+    limit: number | string = 3,
+    search: string = ""
+  ): Promise<FetchAllFilesResponse> {
+    return FileUploadRepository.fetchAllFiles(page, limit, search);
   }
 
   static async deleteFile(fileName: string): Promise<FileUploadResponse> {

@@ -53,7 +53,7 @@ const FilesTable = ({
               <td className="p-4 truncate cursor-pointer">
                 {Utils.formatFileSize(file.size)}
               </td>
-              <td className="flex space-x-2">
+              <td className="flex space-x-2 mt-2">
                 <button
                   onClick={() => openDeleteFileModal(file.file_name)}
                   disabled={loading}

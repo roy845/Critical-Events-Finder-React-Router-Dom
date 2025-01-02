@@ -35,8 +35,12 @@ export class FileUploadRepository {
     return this.validateFileUploadResponse(response);
   }
 
-  static async fetchAllFiles(): Promise<FetchAllFilesResponse> {
-    const response = await FileUploadDAL.fetchAllFiles();
+  static async fetchAllFiles(
+    page: number = 1,
+    limit: number | string = 3,
+    search: string = ""
+  ): Promise<FetchAllFilesResponse> {
+    const response = await FileUploadDAL.fetchAllFiles(page, limit, search);
     return this.validateFetchAllFilesResponse(response);
   }
 

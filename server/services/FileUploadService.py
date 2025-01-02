@@ -17,6 +17,7 @@ class FileUploadService:
         aws_secret_access_key=settings.aws_secret_access_key,
         region_name=S3_REGION_NAME
     )
+  
 
     @staticmethod
     def uploadExcelFile(uploaded_file):
@@ -100,17 +101,42 @@ class FileUploadService:
             }, 500
     
     @staticmethod
-    def listFiles():
-        """List all files in the S3 bucket."""
+    def listFiles(page=1, limit=10, search=''):
+        """List all files in the S3 bucket with pagination and search."""
         try:
-            response = FileUploadService.s3_client.list_objects_v2(Bucket=FileUploadService.S3_BUCKET_NAME,Prefix='royatali/')
+            response = FileUploadService.s3_client.list_objects_v2(
+                Bucket=FileUploadService.S3_BUCKET_NAME,
+                Prefix='royatali/'
+            )
+
             if 'Contents' in response:
-                files = [
-                {'file_name': file['Key'], 'size': file['Size']} 
-                for file in response['Contents'] 
-                if not file['Key'].endswith('/')
-            ]
-                return {'message': 'Files listed successfully', 'files': files}, 200
+                # Filter files (exclude directories and search by name)
+                all_files = [
+                    {'file_name': file['Key'], 'size': file['Size']} 
+                    for file in response['Contents'] 
+                    if not file['Key'].endswith('/')
+                ]
+
+                # Apply search filter
+                if search:
+                    all_files = [file for file in all_files if search.lower() in file['file_name'].lower()]
+
+                # Calculate total files for pagination metadata
+                total_files = len(all_files)
+
+                # Apply pagination
+                start_index = (page - 1) * limit
+                end_index = start_index + limit
+                paginated_files = all_files[start_index:end_index]
+
+                return {
+                    'message': 'Files listed successfully',
+                    'total_files': total_files,
+                    'page': page,
+                    'limit': limit,
+                    'total_pages': (total_files // limit) + (1 if total_files % limit != 0 else 0),
+                    'files': paginated_files
+                }, 200
             else:
                 return {'message': 'No files found in the S3 bucket', 'files': []}, 200
         except Exception as e:
@@ -140,6 +166,34 @@ class FileUploadService:
             return {'message': 'All files deleted successfully'}, 200
         except Exception as e:
             return {'message': 'Failed to delete all files', 'error': str(e)}, 500
+    
+    @staticmethod
+    def createFolder(folder_name):
+        """
+        Create a folder in the S3 bucket.
+
+        Args:
+            folder_name (str): The name of the folder to create.
+
+        Returns:
+            dict: Success or error message.
+        """
+        try:
+            # Ensure the folder name ends with a slash
+            if not folder_name.endswith('/'):
+                folder_name += '/'
+
+            # Use a zero-byte file to represent the folder
+            FileUploadService.s3_client.put_object(
+                Bucket=FileUploadService.S3_BUCKET_NAME,
+                Key=folder_name
+            )
+
+            return {'message': f'Folder "{folder_name}" created successfully'}, 200
+
+        except Exception as e:
+            return {'message': f'Failed to create folder "{folder_name}"', 'error': str(e)}, 500
+
     
     @staticmethod
     def downloadAndProcessFile(file_name,file_type):

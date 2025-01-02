@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import { FileUploadService } from "../services/fileUploadService";
 import { FileType } from "../types/types";
@@ -11,6 +11,7 @@ import {
 } from "../features/criticalEvents/criticalEventsSlice";
 import { useAppDispatch } from "../app/hooks";
 import { useNavigate } from "react-router-dom";
+import debounce from "lodash.debounce";
 
 export const useFileOperations = () => {
   const [files, setFiles] = useState<FileType[]>([]);
@@ -23,9 +24,21 @@ export const useFileOperations = () => {
   const [modalType, setModalType] = useState<"single" | "all" | null>(null);
   const [fileToDelete, setFileToDelete] = useState<string | null>(null);
   const [confirmText, setConfirmText] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number | string>(3);
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [searchFiles, setSearchFiles] = useState<string>("");
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const debouncedSearch = useCallback(
+    debounce((keyword: string) => {
+      setSearchFiles(keyword);
+    }, 500),
+    []
+  );
 
   const deleteFile = async () => {
     if (!fileToDelete) return;
@@ -67,21 +80,36 @@ export const useFileOperations = () => {
     setConfirmText("");
   };
 
+  const fetchFiles = async (
+    page: number = 1,
+    limit: number | string = 3,
+    search: string = ""
+  ) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await FileUploadService.fetchAllFiles(
+        page,
+        limit,
+        search
+      );
+      setFiles(response.files);
+      setTotalPages(response.total_pages);
+    } catch (error) {
+      setError("Failed to load files.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchFiles = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await FileUploadService.fetchAllFiles();
-        setFiles(response.files);
-      } catch (error: any) {
-        setError("Failed to load files.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchFiles();
-  }, []);
+    fetchFiles(currentPage, itemsPerPage, searchFiles);
+  }, [currentPage, itemsPerPage, searchFiles]);
+
+  useEffect(() => {
+    debouncedSearch(searchKeyword);
+  }, [searchKeyword, debouncedSearch]);
 
   const handleConfirm = async () => {
     if (modalType === "single") {
@@ -131,6 +159,7 @@ export const useFileOperations = () => {
 
   return {
     files,
+    searchKeyword,
     handleConfirm,
     downloadAndProcessFile,
     openDeleteFileModal,
@@ -143,5 +172,18 @@ export const useFileOperations = () => {
     confirmText,
     setConfirmText,
     closeModal,
+    currentPage,
+    totalPages,
+    itemsPerPage,
+    setPage: (page: number) =>
+      page > 0 && page <= totalPages && setCurrentPage(page),
+    setItemsPerPage: (limit: number | string) => {
+      setItemsPerPage(limit);
+      setCurrentPage(1);
+    },
+    setSearchTerm: (term: string) => {
+      setSearchKeyword(term);
+      setCurrentPage(1);
+    },
   };
 };

@@ -13,7 +13,7 @@ const DeleteAllFilesButton: React.FC<DeleteAllFilesButtonProps> = ({
   loading,
 }) => {
   return (
-    <div className="flex justify-start mb-6">
+    <div className="mt-2 flex justify-start mb-2">
       <button
         onClick={onClick}
         disabled={loading}
